@@ -1,0 +1,3 @@
+[submodule "alloystar"]
+	path = alloystar
+	url = https://github.com/johnwickerson/alloystar.git
