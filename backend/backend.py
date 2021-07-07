@@ -426,12 +426,12 @@ class TracesList:
     def populate_list(self, maximum_traces=None, unique=True, shuffle=False):
 
         for file_nr, file in enumerate(self._files):
+            if maximum_traces:
+                if file_nr >= int(maximum_traces):
+                    break
             ex = Trace()
             ex.get_execution(os.path.join(self.DIR, file))
             self.executions.append(ex)
-            if maximum_traces:
-                if file_nr > int(maximum_traces):
-                    break
 
         print(str(self.get_number_executions) + " traces read")
         if unique:
@@ -450,6 +450,7 @@ class TracesList:
 
     def remove_duplicates(self):
 
+        unique_fence =[]
         for i in range(len(self.executions)):
             unique = True
             for j in range(i + 1, len(self.executions)):
@@ -457,7 +458,10 @@ class TracesList:
                     unique = False
             if unique:
                 self.unique_executions.append(self.executions[i])
-        print(str(len(self.unique_executions)) + " unique traces")
+                if self.executions[i].has_fences:
+                    unique_fence.append(self.executions[i])
+        print(str(len(self.unique_executions)) + " unique disallowed traces")
+        print(str(len(unique_fence)) + " unique allowed traces")
 
 
 class HardwareTests:
@@ -1124,7 +1128,7 @@ class RunCbmcTests:
     BUILD_FOLDER = "BUILD"
     COMPILE_LIMIT = 100
 
-    def __init__(self, traces, rep, unwinding, cores, define1="-DALLOY_TRACES", define2="-DTRACE_", filename="alloy_trace.c"):
+    def __init__(self, traces, rep, unwinding, cores, define1="-DALLOY_TRACES", define2="-DTRACE_", filename="alloy_traces.c"):
         self._traces = traces
         self.rep = rep
         self.unwind = int(unwinding)
@@ -1173,10 +1177,10 @@ class RunCbmcTests:
             unreproducible_traces = list(tqdm(p.imap(self.run_cbmc, self._traces), total=len(self._traces)))
 
         if sorted(self._traces) == sorted(unreproducible_traces):
-            print(colored("\nAll traces could NOT be reproduced", NOT_REPRODUCIBLE_COLOR))
+            print("\nAll traces could NOT be reproduced\n")
             return
         if sum(1 for i in unreproducible_traces if i == -1) == len(self._traces):
-            print(colored("\nAll traces could be reproduced", REPRODUCIBLE_COLOR))
+            print("\nAll traces could be reproduced\n")
             return
 
         if not self.rep:

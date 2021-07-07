@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Clean previous traces
-cd traces
-rm *
+mkdir traces; cd traces; rm *
 
 
 # Generate new traces
