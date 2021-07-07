@@ -3,10 +3,6 @@
 
 #include "actors.h"
 
-#define MAX_CPU_WRITES 5
-#define MAX_CPU_READS 5
-#define MAX_WR_REQ 5
-#define MAX_RD_REQ 5
 
 /*
  * x     ---> location
@@ -47,6 +43,10 @@
  * Success
  */
 #ifdef FPGA_CPU_TEST_1
+#define MAX_WR_REQ 2
+#define MAX_RD_REQ 0
+#define MAX_CPU_WRITES 0
+#define MAX_CPU_READS 2
 void fpga_2writes_cpu_2reads_same_channel_with_response();
 #endif
 
@@ -68,6 +68,10 @@ void fpga_2writes_cpu_2reads_same_channel_with_response();
  * Fail
  */
 #ifdef FPGA_CPU_TEST_2
+#define MAX_WR_REQ 2
+#define MAX_RD_REQ 0
+#define MAX_CPU_WRITES 0
+#define MAX_CPU_READS 2
 void fpga_2writes_cpu_2reads_any_channel_with_response();
 #endif
 
@@ -88,6 +92,10 @@ void fpga_2writes_cpu_2reads_any_channel_with_response();
  * Fail
  */
 #ifdef FPGA_CPU_TEST_3
+#define MAX_WR_REQ 2
+#define MAX_RD_REQ 0
+#define MAX_CPU_WRITES 0
+#define MAX_CPU_READS 2
 void fpga_2writes_cpu_2reads_different_channel_no_sync();
 #endif
 
@@ -110,6 +118,10 @@ void fpga_2writes_cpu_2reads_different_channel_no_sync();
  * Success
  */
 #ifdef FPGA_CPU_TEST_4
+#define MAX_WR_REQ 3
+#define MAX_RD_REQ 0
+#define MAX_CPU_WRITES 0
+#define MAX_CPU_READS 2
 void fpga_2writes_cpu_2reads_any_channel_with_fence();
 #endif
 
@@ -130,6 +142,10 @@ void fpga_2writes_cpu_2reads_any_channel_with_fence();
  * Fail
  */
 #ifdef FPGA_CPU_TEST_5
+#define MAX_WR_REQ 0
+#define MAX_RD_REQ 2
+#define MAX_CPU_WRITES 2
+#define MAX_CPU_READS 0
 void fpga_2reads_cpu_2writes_different_channel_no_sync();
 #endif
 
@@ -150,6 +166,10 @@ void fpga_2reads_cpu_2writes_different_channel_no_sync();
  * Success
  */
 #ifdef FPGA_CPU_TEST_6
+#define MAX_WR_REQ 0
+#define MAX_RD_REQ 2
+#define MAX_CPU_WRITES 2
+#define MAX_CPU_READS 0
 void fpga_2reads_cpu_2writes_same_channel_no_sync();
 #endif
 

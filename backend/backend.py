@@ -1173,10 +1173,10 @@ class RunCbmcTests:
             unreproducible_traces = list(tqdm(p.imap(self.run_cbmc, self._traces), total=len(self._traces)))
 
         if sorted(self._traces) == sorted(unreproducible_traces):
-            print("\nAll traces could NOT be reproduced")
+            print(colored("\nAll traces could NOT be reproduced", NOT_REPRODUCIBLE_COLOR))
             return
         if sum(1 for i in unreproducible_traces if i == -1) == len(self._traces):
-            print("\nAll traces could be reproduced")
+            print(colored("\nAll traces could be reproduced", REPRODUCIBLE_COLOR))
             return
 
         if not self.rep:
@@ -1271,6 +1271,7 @@ if __name__ == '__main__':
     shuffle = False
     manual_traces = False
     queue_traces = False
+    test_setup = False
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hdru:m:fc:s", ["help",
@@ -1290,7 +1291,8 @@ if __name__ == '__main__':
                                                                  "vh1_enemy=",
                                                                  "shuffle",
                                                                  "manual_traces",
-                                                                 "queue_traces"])
+                                                                 "queue_traces",
+                                                                 "test_setup"])
     except getopt.GetoptError:
         print_help()
         sys.exit(2)
@@ -1333,10 +1335,25 @@ if __name__ == '__main__':
             manual_traces = True
         elif opt in "--queue_traces":
             queue_traces = True
+        elif opt in "--test_setup":
+            test_setup = True
+
+    # A simple test to verify that everything is installed properly
+    if test_setup:
+        print(colored("Running CPU/FPGA-only disallowed traces from the     manual", MESSAGE_COLOR))
+        run_cbmc = RunCbmcTests(traces=[1, 4, 6],
+                                rep=True,
+                                unwinding=unwind,
+                                cores=cores,
+                                define1="-DTESTS_CPU_FPGA",
+                                define2="-DFPGA_CPU_TEST_",
+                                filename="tests_cpu_fpga.c")
+        run_cbmc.run_tests()
+        exit()
 
     # This mode verifies the traces from the manual
     if manual_traces:
-        print(colored("Running FPGA-only allowed traces from manual", MESSAGE_COLOR))
+        print(colored("Running FPGA-only allowed traces from the manual", MESSAGE_COLOR))
         run_cbmc = RunCbmcTests(traces=[1, 5, 6, 8, 11],
                                 rep=True,
                                 unwinding=unwind,
@@ -1344,9 +1361,9 @@ if __name__ == '__main__':
                                 define1="-DTESTS_FPGA",
                                 define2="-DFPGA_TEST_",
                                 filename="tests_fpga.c")
-        #run_cbmc.run_tests()
+        run_cbmc.run_tests()
 
-        print(colored("Running FPGA-only disallowed traces from manual", MESSAGE_COLOR))
+        print(colored("Running FPGA-only disallowed traces from the manual", MESSAGE_COLOR))
         run_cbmc = RunCbmcTests(traces=[2, 3, 4, 7, 9, 10],
                                 rep=False,
                                 unwinding=unwind,
@@ -1354,9 +1371,9 @@ if __name__ == '__main__':
                                 define1="-DTESTS_FPGA",
                                 define2="-DFPGA_TEST_",
                                 filename="tests_fpga.c")
-        #run_cbmc.run_tests()
+        run_cbmc.run_tests()
 
-        print(colored("Running CPU/FPGA-only allowed traces from manual", MESSAGE_COLOR))
+        print(colored("Running CPU/FPGA-only allowed traces from the manual", MESSAGE_COLOR))
         run_cbmc = RunCbmcTests(traces=[2, 3, 5],
                                 rep=True,
                                 unwinding=unwind,
@@ -1366,7 +1383,7 @@ if __name__ == '__main__':
                                 filename="tests_cpu_fpga.c")
         run_cbmc.run_tests()
 
-        print(colored("Running CPU/FPGA-only disallowed traces from manual", MESSAGE_COLOR))
+        print(colored("Running CPU/FPGA-only disallowed traces from the     manual", MESSAGE_COLOR))
         run_cbmc = RunCbmcTests(traces=[1, 4, 6],
                                 rep=True,
                                 unwinding=unwind,

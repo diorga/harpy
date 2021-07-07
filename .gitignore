@@ -2,3 +2,5 @@ model/CBMC/harp/alloy_traces.c
 model/CBMC/harp/alloy_traces.h
 model/CBMC/harp/tests_multiple_threads.c
 model/CBMC/harp/tests_multiple_threads.h
+
+backend/.idea/
