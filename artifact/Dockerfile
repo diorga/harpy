@@ -6,6 +6,7 @@ RUN apt-get update && \
     apt-get install build-essential -y && \
     apt-get install python3 -y && \
     apt-get install -y python3-xmltodict && \
+    apt-get install -y python3-tqdm && \
     apt-get install -y python3-termcolor && \
     apt-get install -y git && \
     apt-get install -y wget && \
