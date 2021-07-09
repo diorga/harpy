@@ -1,0 +1,8 @@
+litmus_processor.json
+
+SI:../../../base/hw/sim/cci_mpf_test_base_addenda.txt
+QI:../../../base/hw/par/cci_mpf_test_base_PAR_files.qsf
+
+
++incdir+.
+litmus_processor.sv
