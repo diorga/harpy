@@ -929,6 +929,28 @@ pred wrreq_cpu_allowed[X:Exec_F] {
   }
 }
 
+
+// Disallowed
+pred alloy_trace_104[X:Exec_F] {
+  consistent[none->none, X]
+  some disj E5, E4, E3, E2, E1, E0 : E {
+
+  X.RdReq = E0
+  X.RdRsp = E1
+  X.WrReq = E2
+  X.WrRsp = E3
+  X.CpuRead = E4
+  X.CpuWrite = E5
+
+  (E0->E1) + (E1->E2) + (E2->E3) +  (E4->E5) in X.sb
+
+  X.sch = sq[E0+E1]+ sq[E2+E3]
+  X.sloc = sq[E0 + E1 + E5] + sq[E2 + E3 + E4]
+  X.rf = (E5->E1) + (E3->E4)
+  }
+}
+run alloy_trace_104 for 1 Exec_F, exactly 6 E expect 0
+
 run wrreq_cpu_allowed for 1 Exec_F, exactly 6 E expect 0
 run red_req_and_fence3 for 1 Exec_F, exactly 7 E expect 1
 run red_req_and_fence2 for 1 Exec_F, exactly 7 E expect 1
