@@ -56,7 +56,12 @@ fun ppo_tso[e:PTag->E, X:Exec_F] : E->E {
 
 // ppo for fpga
 fun ppo_fpga[e:PTag->E, X:Exec_F] : E->E {
- ( sb[e,X]  & sch[e,X]  & (  (RdRsp[e,X] + WrRsp[e,X] +FnRsp[e,X] + FnRspAny[e,X]) ->  (EV_F[e,X] - RdRsp[e,X]) ) ) + readpair[e,X] + writepair[e,X] + fencepair[e,X] + fenceanypair[e,X]
+ ( sb[e,X]   & sch[e,X] &(  (RdRsp[e,X] + WrRsp[e,X] +FnRsp[e,X] + FnRspAny[e,X]) ->  (EV_F[e,X] - RdRsp[e,X]) ) ) +
+ ( sb[e,X]   & (  (RdRsp[e,X]) ->  (EV_F[e,X] - RdRsp[e,X]) ) ) +
+ readpair[e,X] + 
+ writepair[e,X] + 
+ fencepair[e,X] + 
+ fenceanypair[e,X]
 }
 
 
