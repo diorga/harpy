@@ -1234,7 +1234,7 @@ class RunHardwareTests:
             for trace in failed_traces:
                 print(trace)
         else:
-            print("Great success!!!!")
+            print("All hardware litmus test behaved as expected.")
 
 def print_help():
     print('backend.py')
