@@ -77,7 +77,7 @@ source /export/fpga/bin/setup-fpga-env fpga-bdx-opae
 1. **Claim 1**: Our operational model, implemented in CBMC, is consistent with the traces provided in the Intel manual.
 2. **Claim 2:**: Our axiomatic model, implemented in CBMC, is consistent with the traces provided in the Intel manual
 3. **Claim 3**: Basic queue operations are validated against the operational model.
-4. **Claim 4**: We were able to generate 477 disallowed traces and 183 allowed traces from the axiomatic model.
+4. **Claim 4**: We were able to generate 583 disallowed traces and 153 allowed traces from the axiomatic model.
 5. **Claim 5**: The Alloy-generated traces are consistent with the operational model.
 6. **Claim 6**: The Alloy-generated traces are consistent with the hardware.
 7. **Claim 7**: The corectly synchronised queue and the incorectly synchronised queues behave as expected. 
