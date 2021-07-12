@@ -214,6 +214,7 @@ Afterwards, a local copy of the repo should be downloaded and the soft-core proc
 ```
     git clone https://github.com/diorga/harpy.git
     cd harpy/backend/litmus_tests/test/hw
+    afu_synth_setup -s rtl/sources.txt build_fpga
     cd build_fpga
     qsub-synth            # This will start the synthesis process
     tail -f build.log     # The file will report the build status
@@ -268,3 +269,102 @@ Run the actual hardware tests using the following script
 ```
 
 The **-hardware** command line argument will tell the python script to generate litmus tests that will runon the CPU and FPGA. The **--run_hardware** command will tell the script to actuallly run the tests.
+
+#### Expected behaviour
+
+If no litmus tests exhibited weak behaviour, the following message should appear.
+
+```
+All hardware litmus test behaved as expected.
+```
+
+### **Claim 7**: The corectly synchronised queue and the incorectly synchronised queues
+
+We analyse the behaviour of the queue in Figure 13 and Figure 14. Before the queues can be tested, they first need to be synthesized. This process is simillar to the one for synthesing the soft-core processor.
+
+#### Synthesize the queues
+After an account has been created for the IL Academic Compute Environment, the user should be able to connect with the following commands:
+
+```
+    ssh <username>@ssh-iam.intel-research.net            
+    source /export/fpga/bin/setup-fpga-env fpga-bdx-opae
+```
+Afterwards, the queue can be synthesized. This process will take about two hours but only needs to be done once.
+```
+    cd harpy/case_study/queue/FPGA_enqueue/hw
+    afu_synth_setup -s rtl/sources.txt build_fpga
+    cd build_fpga
+    qsub-synth            # This will start the synthesis process
+    tail -f build.log     # The file will report the build status
+```    
+
+When the processor is synthesized, the following message should appear:
+
+```
+=======================================================
+ BDW 503 PR AFU compilation complete
+ AFU gbs file located at FPGA_enqueue.gbs
+ Design meets timing
+=======================================================
+```
+
+The exact same process needs to be done for the enqueue. Only the first command needs to be changed to the following:
+
+```
+    cd harpy/case_study/queue/FPGA_enqueue/hw
+```
+
+#### Load the queue
+
+First, connect to the Intel server and request a FPGA.
+```
+    ssh <username>@ssh-iam.intel-research.net            
+    source /export/fpga/bin/setup-fpga-env fpga-bdx-opae
+    qsub-fpga
+```
+
+Load the enqueue image onto the FPGAL
+```
+    cd harpy/case_study/queue/FPGA_enqueue/hw/build_fpga
+    fpgaconf FPGA_enqueue.gbs    # Load the FPGA image
+```
+
+Compile the CPU part
+```
+    cd harpy/case_study/queue/FPGA_enqueue/sw
+    make
+```
+
+#### Run the synchornised queue 
+Run the CPU/FPGA code
+```
+    ./FPGA_enqueue -e 1000000
+```
+#### Expected behaviour
+This will run the experiment described in Figure 13a for 1000000. The final execution time should be then displayed.
+
+![](https://i.imgur.com/sT0vfLx.png)
+
+Since the queue is correctly synchronised, there should not be any wrong entries.
+
+
+#### Run the improperly synchronised queue 
+
+Run the CPU/FPGA code
+```
+    ./FPGA_enqueue --wr_rsp_enqueue 0 --wr_rsp_write_tail 0 -e 1000000
+```
+This will run the experiment and ommit both response synchronisation elements. This will most likely run faster than the correctly synchronised queue. However, the number of wrong entries will be quite low. To get more wrong entries, simillar to Figure 14a, we need to add more noise to the experiment. This can be done with the following command:
+```
+    ./FPGA_enqueue --wr_rsp_enqueue 0 --wr_rsp_write_tail 0 -e 1000000  --VL0_enemy 10
+```
+The **--VL0_enemy 10** command will tell the FPGA to add extra traffic on the VL0 channel every 10 clock cycles.
+
+
+#### Expected behaviour
+This will run the experiment described in Figure 14a for 1000000. The final execution time and incorrectly received elements should be then displayed.
+
+![](https://i.imgur.com/5aLELE6.png)
+
+In our paper, we provided an upper bound for the number of incorrectly received elements. For this reason, it can be expected that in the actual experiments, a low number will be obatined.
+
