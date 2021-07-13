@@ -31,7 +31,7 @@ The artifact contains the necessary data and scripts to build a docker container
 1. The first alternative is to use the `harpy.tar` pre-built docker image we have provided in the archive. To launch the docker image, please run:
 
 ```
-    sudo docker load --input harpy.tar    # Loading from the tar 
+    docker load --input harpy.tar    # Loading from the tar 
 ```
 
 2. Another alternative to building the docker image, is to direcly pull it from the docker repo using the following command
