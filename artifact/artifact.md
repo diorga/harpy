@@ -6,6 +6,8 @@ This manual is divided into two parts: **Getting Started Guide** that should be 
 
 ## Getting Started Guide
 
+Ensure that docker is installed on your operating system. Furthermore, since the docker container is quite big, ensure that you have at least 10GB of available disk memory. Instructions on how to install docker on a typical Ubuntu system can be found [here](https://linuxize.com/post/how-to-install-and-use-docker-on-ubuntu-20-04/).
+
 ### Git
 Clone the main git repo using the following command
 
@@ -15,53 +17,71 @@ git clone https://github.com/diorga/harpy.git
  
 ### Docker
 
+#### Building the docker image
 From within the git repo, build the docker image. 
 
 ```
-docker build -t diorga/harpy -f artifact/Dockerfile .
+    cd harpy
+    docker build -t diorga/harpy -f artifact/Dockerfile .
 ```
+#### Alternatives to building image
+The artifact contains the necessary data and scripts to build a docker container; however, this can be a lengthy process. 
+
+
+1. The first alternative is to use the `harpy.tar` pre-built docker image we have provided in the archive. To launch the docker image, please run:
+
+```
+    sudo docker load --input harpy.tar    # Loading from the tar 
+```
+
+2. Another alternative to building the docker image, is to direcly pull it from the docker repo using the following command
+```
+    docker pull diorga/harpy         # Pulling it from the docker repo
+```
+#### Starting the Docker containter 
 
 Next, start the docker container
 
 ```
-docker run -it diorga/harpy bash
+    docker run -it diorga/harpy bash
 ```
 
 This should start a docker container where all the experiments can be run.
 
-#### Note
+#### Notes
 
 1. Depending on how you installed docker, you might need to prefix every docker command with **sudo**.
-2. There is an alternative to building the docker image. You can direcly pull it from the docker repo using the following command
-```
-    docker pull diorga/harpy
-```
-3. The time it takes to build the docker container depends on the internet speed. Generally, it should take less than 10 minutes.
+2. The time it takes to build the docker container depends on the internet speed. Generally, it should take less than 10 minutes.
+3. 
 ### Testing CBMC + Alloy
 To verify that everything has been configured properly, run the following commands. 
 ```
     cd backend
-    ./generate 4
-    python3 backend.py --cbmc --run_cbmc --max_traces 2
+    ./generate.sh 4
+    python3 backend.py --cbmc --run_cbmc --max_traces 2 --unwind 7
 ```
-This will use Alloy to generate all disallowed traces with 4 events. Afterwards, CBMC will verify just two of them. After this, a message that the traces could not be reproduced by the model will be displayed. 
+This will use Alloy to generate all disallowed traces with 4 events. Afterwards, because of the value of the `--max_traces` parameter, CBMC will verify just two of them. Because the ``--unwind`` paramater has been set to a low value, this verification step should just take a few minutes. After this, a message that the traces could not be reproduced by the model will be displayed. The message will be simillar to the following one:
+
+![](https://i.imgur.com/i8D1GgB.png)
+
 
 #### Note
 
-If the numbers of prallel threads is too big, the system can run out of memory and report the following message:
-```
-SAT checker ran out of memory
-```
+If the numbers of prallel threads is too big, the system can run out of memory and report the following error:
+> ***SAT checker ran out of memory***
+
 In this case, the system will not report the correct result.
 
 ### Hardware Setup
-
+This hardware setup will be required further on to verify the final 2 claims. Please ensure that you create an account and are able to connect to it in the Kick-the-Tires Phase.
 #### Create account
 Our models are also validated on actual hardware. To gain access to the CPU/FPGA systems, an account is needed for the IL Academic Compute Environment. An account can be created by registering here:
 https://registration.intel-research.net/register
 
 This will require an intel lab sponsor. **Brent Forgeron** has agreed to help us for the review process. You should fill in his name in the 
-**Intel Labs Sponsor for the Research Engagement** section. 
+**Intel Labs Sponsor for the Research Engagement** section.
+
+We cannot control how long it will take Intel to approve the account, but if they do not reply within 72 hours please ask the AEC chairs to contact the paper authors as we may be able to ping our Intel contacts directly.
 
 #### Connect to account
 
@@ -97,7 +117,7 @@ Each file presents the trace and points to the paragraph in the Intel manual whe
 ```
 
 Two parameters can be changed: the number of traces verified concurrently and the maximum unwind depth. To change the number of concurrent verifications, specify the `--cores` command-line argument, and change the unwind depth, specify the `--unwind` command-line argument.
-For example, the following command runs the same experiment but uses 8 cores (instead of the deafault 4) and uses an unwind depth of 30 (instead of the default 8).
+For example, the following command runs the same experiment but uses 8 cores (instead of the default 4) and uses an unwind depth of 30 (instead of the default 8).
 
 ```
     python3 backend.py --manual_traces --cores 8 --unwind 30
