@@ -229,6 +229,7 @@ depending on whether we were checking allowed executions or disallowed execution
 
 
 #### Synthesize the soft-core
+
 After an account has been created for the IL Academic Compute Environment, the user should be able to connect with the following commands:
 
 ```
@@ -236,9 +237,14 @@ After an account has been created for the IL Academic Compute Environment, the u
     source /export/fpga/bin/setup-fpga-env fpga-bdx-opae     # Configure the environmental variables such that a Broadwell Xeon CPUs (E5-2600v4) with an integrated in-package Arria 10 is used
 ```
 Afterwards, a local copy of the repo should be downloaded and the soft-core processor synthesized. This process will take about two hours but only needs to be done once.
+
+
 ```
-    git clone https://github.com/diorga/harpy.git            
-    cd harpy/backend/litmus_tests/test/hw
+    cd ~        
+    git clone https://github.com/OPAE/intel-fpga-bbb.git     # CLone the inte base building blocks 
+    git clone https://github.com/diorga/harpy.git            # Clone this repo
+    sed -i "s/diorga/<username>/g" harpy/backend/litmus_tests/base/hw/par/cci_mpf_test_base_PAR_files.qsf    # Change the <username> to your username. This should update the location of the BBB_CCI_SRC variable
+    cd harpy/backend/litmus_tests/test/hw           
     afu_synth_setup -s rtl/sources.txt build_fpga    # Configure a synthesis project
     cd build_fpga    
     qsub-synth            # This will start the synthesis process
@@ -317,6 +323,7 @@ After an account has been created for the IL Academic Compute Environment, the u
 ```
 Afterwards, the queue can be synthesized. This process will take about two hours but only needs to be done once.
 ```
+    sed -i "s/diorga/<username>/g" harpy/case_study/queue/base/hw/par/cci_mpf_test_base_PAR_files.qsf    # Change the <username> to your username. This should update the location of the BBB_CCI_SRC variable
     cd harpy/case_study/queue/FPGA_enqueue/hw
     afu_synth_setup -s rtl/sources.txt build_fpga
     cd build_fpga
