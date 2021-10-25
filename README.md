@@ -52,7 +52,7 @@ This should start a docker container where all the experiments can be run.
 
 1. Depending on how you installed docker, you might need to prefix every docker command with **sudo**.
 2. The time it takes to build the docker container depends on the internet speed. Generally, it should take less than 10 minutes.
-3. 
+
 ### Testing CBMC + Alloy
 To verify that everything has been configured properly, run the following commands. 
 ```
